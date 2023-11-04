@@ -91,7 +91,7 @@ jobs:
 
       - name: Pack
         working-directory: ${{github.workspace}}/build-${{matrix.buildType}}
-        run: cpack -G ZIP -C ${{matrix.buildType}} --config ./dxFeedGraalCxxApiPackConfig.cmake
+        run: cpack -G ZIP -C ${{matrix.buildType}} --config ./kurlikorPackConfig.cmake
 
       - name: Upload
         uses: actions/upload-artifact@v3
