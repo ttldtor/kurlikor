@@ -35,7 +35,7 @@ endif ()
 
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE libkurlikor)
+target_link_libraries(${PROJECT_NAME} PRIVATE kurlikor)
 
 if (KURLIKOR_INSTALL)
     install(TARGETS ${PROJECT_NAME})

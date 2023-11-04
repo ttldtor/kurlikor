@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(libkurlikor)
+project(kurlikor)
 
 if (POLICY CMP0092)
     cmake_policy(SET CMP0092 NEW)
@@ -34,8 +34,7 @@ elseif (UNIX)
 endif ()
 
 
-add_library(${PROJECT_NAME} src/libkurlikor.cpp)
-add_library(kurlikor ALIAS ${PROJECT_NAME})
+add_library(${PROJECT_NAME} src/kurlikor.cpp)
 add_library(kurlikor::kurlikor ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
