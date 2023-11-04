@@ -1,3 +1,6 @@
+# Copyright (c) 2023 ttldtor.
+# SPDX-License-Identifier: BSL-1.0
+
 # Prerequisites
 *.d
 
@@ -30,3 +33,12 @@
 *.exe
 *.out
 *.app
+
+build/
+cmake-build-*/
+.idea/
+/doc/html/
+/doc/latex/
+
+.PVS-Studio/
+*.PVS-Studio.*
