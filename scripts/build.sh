@@ -20,7 +20,7 @@ do
     echo "--- Configuring CMake ---" && cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DDXFCXX_VERSION="$TAG" -DDXFCXX_PACKAGE_SUFFIX=-$BUILD_TYPE &&
     echo "--- Building ---" && cmake --build "$BUILD_DIR" --config $BUILD_TYPE --parallel 8 &&
     cd "$BUILD_DIR" &&
-    echo "--- Packing ---" && cpack -G ZIP -C $BUILD_TYPE --config ./kurlikorConfig.cmake &&
+    echo "--- Packing ---" && cpack -G ZIP -C $BUILD_TYPE --config ./kurlikorPackConfig.cmake &&
     echo "--- Coping bundles ---" && find . -maxdepth 1 -name "*$BUILD_TYPE.zip" -type f -print0 | xargs -0 -I {} cp {} "$DIST_DIR/" &&
     cd "$CUR_DIR" || exit
 done
