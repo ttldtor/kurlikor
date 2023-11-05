@@ -37,6 +37,7 @@ endif ()
 add_library(${PROJECT_NAME} src/kurlikor.cpp)
 add_library(kurlikor::kurlikor ALIAS ${PROJECT_NAME})
 
+target_link_libraries(${PROJECT_NAME} PRIVATE Boost::beast Boost::asio Boost::url)
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 if (KURLIKOR_INSTALL)

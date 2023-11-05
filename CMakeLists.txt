@@ -32,6 +32,22 @@ set(KURLIKOR_GRAAL_TARGET_CPU "unknown" CACHE STRING "")
 
 include(ParseAndDetectPlatforms.cmake)
 
+# Add boost lib sources
+set(BOOST_INCLUDE_LIBRARIES asio beast url)
+set(BOOST_ENABLE_CMAKE ON)
+
+# Download and extract the boost library from GitHub
+message(STATUS "Downloading and extracting boost library sources. This will take some time...")
+include(FetchContent)
+set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
+FetchContent_Declare(
+        Boost
+        URL https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.7z # downloading a zip release speeds up the download
+        USES_TERMINAL_DOWNLOAD TRUE
+        GIT_PROGRESS TRUE
+        DOWNLOAD_NO_EXTRACT FALSE
+)
+FetchContent_MakeAvailable(Boost)
 
 add_subdirectory(lib)
 add_subdirectory(kurlikor-cli)
