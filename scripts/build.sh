@@ -17,7 +17,7 @@ do
     echo "--- $BUILD_TYPE ---" &&
     echo "--- Removing old bundles ---" && find "$DIST_DIR" -maxdepth 1 -name "$TAG*$BUILD_TYPE.zip" -print0 | xargs -0 rm -f &&
     mkdir "$BUILD_DIR" &&
-    echo "--- Configuring CMake ---" && cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DDXFCXX_VERSION="$TAG" -DDXFCXX_PACKAGE_SUFFIX=-$BUILD_TYPE &&
+    echo "--- Configuring CMake ---" && cmake -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DKURLIKOR_VERSION="$TAG" -DKURLIKOR_PACKAGE_SUFFIX=-$BUILD_TYPE &&
     echo "--- Building ---" && cmake --build "$BUILD_DIR" --config $BUILD_TYPE --parallel 8 &&
     cd "$BUILD_DIR" &&
     echo "--- Packing ---" && cpack -G ZIP -C $BUILD_TYPE --config ./kurlikorPackConfig.cmake &&
