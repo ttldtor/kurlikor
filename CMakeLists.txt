@@ -15,7 +15,7 @@ endif ()
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
-set(KURLIKOR_VERSION "v0.1.0-alpha" CACHE STRING "The Kurlikor package version")
+set(KURLIKOR_VERSION "v0.1.1-alpha" CACHE STRING "The Kurlikor package version")
 
 set(CMAKE_CXX_STANDARD 20)
 
