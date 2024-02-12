@@ -23,13 +23,11 @@ A static library (possibly a module) and an application for making HTTP calls.
     <td><a href="https://andivionian.fornever.me/v1/#status-enfer-" rel="nofollow"><img style="vertical-align: middle" src="https://img.shields.io/badge/status-enfer-orange.svg" alt="Status Enfer"></a></td>
   </tr>
   <tr>
-    <td style="width: 2em;"></td>
-    <td style="text-align: left">▫ Sync string</td>
+    <td colspan="2" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;▫ Sync string</td>
     <td><a href="https://andivionian.fornever.me/v1/#status-umbra-" rel="nofollow"><img style="vertical-align: middle" src="https://img.shields.io/badge/status-umbra-red.svg" alt="Status Umbra"></a></td>
   </tr>
   <tr>
-    <td style="width: 2em;"></td>
-    <td style="text-align: left">▫ Sync file</td>
+    <td colspan="2" style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;▫ Sync file</td>
     <td><a href="https://andivionian.fornever.me/v1/#status-umbra-" rel="nofollow"><img style="vertical-align: middle" src="https://img.shields.io/badge/status-umbra-red.svg" alt="Status Umbra"></a></td>
   </tr>
   <tr>
