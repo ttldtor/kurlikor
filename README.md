@@ -13,7 +13,7 @@ A static library (possibly a module) and an application for making HTTP calls.
 | Feature                               |                                                                      |
 |:--------------------------------------|:--------------------------------------------------------------------:|
 | ▪ Simple HTTP Get                     | [![Status Enfer][status-enfer]][andivionian-status-classifier-enfer] |
-| &nbsp;&nbsp;&nbsp;&nbsp;▫ Sync String | [![Status Umbra][status-umbra]][andivionian-status-classifier-umbra] |
+| &nbsp;&nbsp;&nbsp;&nbsp;▫ Sync String | [![Status Enfer][status-enfer]][andivionian-status-classifier-enfer] |
 | &nbsp;&nbsp;&nbsp;&nbsp;▫ Sync File   | [![Status Umbra][status-umbra]][andivionian-status-classifier-umbra] |
 | ▪ Simple HTTP Post                    | [![Status Umbra][status-umbra]][andivionian-status-classifier-umbra] |
 | ▪ Async Requests                      | [![Status Umbra][status-umbra]][andivionian-status-classifier-umbra] |
