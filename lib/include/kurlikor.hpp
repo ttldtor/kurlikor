@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 ttldtor.
+﻿// Copyright (c) 2024 ttldtor.
 // SPDX-License-Identifier: BSL-1.0
 
 #pragma once

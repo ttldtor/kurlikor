@@ -1,4 +1,4 @@
-# Copyright (c) 2023 ttldtor.
+# Copyright (c) 2024 ttldtor.
 # SPDX-License-Identifier: BSL-1.0
 
 cmake_minimum_required(VERSION 3.20)
@@ -23,12 +23,9 @@ option(KURLIKOR_INSTALL "Prepare install" ON)
 
 include(FetchContent)
 
-set(KURLIKOR_GRAAL_TARGET_PLATFORM "unknown-unknown" CACHE STRING "")
 set(KURLIKOR_TARGET_PLATFORM "unknown-unknown" CACHE STRING "")
 set(KURLIKOR_TARGET_OS "unknown" CACHE STRING "")
-set(KURLIKOR_GRAAL_TARGET_OS "unknown" CACHE STRING "")
 set(KURLIKOR_TARGET_CPU "unknown" CACHE STRING "")
-set(KURLIKOR_GRAAL_TARGET_CPU "unknown" CACHE STRING "")
 
 include(ParseAndDetectPlatforms.cmake)
 
@@ -42,7 +39,7 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE) # Needed to print downloading progress
 FetchContent_Declare(
         Boost
-        URL https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.7z # downloading a zip release speeds up the download
+        URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.7z # downloading a zip release speeds up the download
         USES_TERMINAL_DOWNLOAD TRUE
         GIT_PROGRESS TRUE
         DOWNLOAD_NO_EXTRACT FALSE

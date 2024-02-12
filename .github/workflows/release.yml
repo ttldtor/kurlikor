@@ -1,4 +1,4 @@
-# Copyright (c) 2023 ttldtor.
+# Copyright (c) 2024 ttldtor.
 # SPDX-License-Identifier: BSL-1.0
 
 name: release
@@ -28,7 +28,12 @@ jobs:
       version: ${{ steps.set_version.outputs.version }}
       tag_name: ${{ steps.set_version.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          fetch-tags: 'true'
+          fetch-depth: '0'
+          show-progress: 'true'
       - id: get_latest_tag
         run: |
           echo "tag=$(git describe --abbrev=0 --tags)" >> $GITHUB_OUTPUT
@@ -41,62 +46,124 @@ jobs:
             echo "tag_name=${{github.ref}}" >> $GITHUB_OUTPUT
           else
             echo "version=${{ steps.get_latest_tag.outputs.tag }}" >> $GITHUB_OUTPUT
-            echo "tag_name=${{ format('refs/tags/{0}', steps.get_latest_tag.outputs.tag) }}" >> $GITHUB_OUTPUT
+            echo "tag_name=${{ format('refs/tags/{0}', steps.get_latest_tag.outputs.tag) }}" >> $GITHUB_OUTPUT            
           fi
 
   build_package_and_upload:
-    name: Build, Package & Upload
+    name: "${{ matrix.config.name }}-${{matrix.buildType}}: Build, Package & Upload"
     needs: [ get_version ]
     strategy:
       matrix:
-        #        os: [windows-latest, macos-latest, ubuntu-latest]
-        os: [ windows-latest, macos-13, ubuntu-22.04 ]
-        #os: [ ubuntu-22.04 ]
-        #buildType: [ Release, MinSizeRel ]
-        buildType: [ Release, Debug, RelWithDebInfo, MinSizeRel ]
-    runs-on: ${{ matrix.os }}
-    env:
-      XCODE_VERSION: '15.0'
-      GCC_VERSION: '12'
+        config:
+          - name: win-vs2022
+            image: windows-latest
+            os: windows
+            cores: 4
+            cc: 'cl'
+            cxx: 'cl'
+          - name: macos-13-xcode-15
+            image: macos-13
+            os: macos
+            cores: 4
+            xcode: '15.0'
+            cc: 'clang'
+            cxx: 'clang++'
+          - name: ubuntu-22.04-gcc-13
+            image: ubuntu-22.04
+            os: linux
+            cores: 4
+            cc: 'gcc-13'
+            cxx: 'g++-13'
+          - name: macos-14-xcode-15
+            image: macos-14
+            os: macos
+            cores: 3
+            xcode: '15.0'
+            cc: 'clang'
+            cxx: 'clang++'
+        buildType: [ Release, Debug ]
+    runs-on: ${{ matrix.config.image }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Select Xcode version
-        if: ${{ contains(matrix.os, 'macos') }}
-        run: sudo xcode-select -s '/Applications/Xcode_${{env.XCODE_VERSION}}.app/Contents/Developer'
+        if: ${{ contains(matrix.config.os, 'macos') }}
+        run: sudo xcode-select -s '/Applications/Xcode_${{matrix.config.xcode}}.app/Contents/Developer'
 
       - name: Prepare build
         run: |
           ls
-          mkdir ${{github.workspace}}/build-${{matrix.buildType}}    
+          mkdir ${{github.workspace}}/build-${{matrix.buildType}}   
 
-      - name: Configure CMake (Win)
-        if: ${{ contains(matrix.os, 'windows') }}
-        run: cmake -B ${{github.workspace}}/build-${{matrix.buildType}} -DCMAKE_BUILD_TYPE=${{matrix.buildType}} -DDXFCXX_VERSION="${{needs.get_version.outputs.version}}" -DDXFCXX_PACKAGE_SUFFIX="-${{matrix.buildType}}"
+      - name: Configure CMake
+        if: ${{ contains(matrix.config.os, 'win') }}
+        run: >
+          cmake -B ${{github.workspace}}/build-${{matrix.buildType}}
+          -DCMAKE_BUILD_TYPE=${{matrix.buildType}}
+          -DKURLIKOR_VERSION="${{needs.get_version.outputs.version}}"
+          -DKURLIKOR_PACKAGE_SUFFIX="-${{matrix.buildType}}"
+          -DKURLIKOR_BUILD_UNIT_TESTS=OFF
+          -DKURLIKOR_BUILD_SAMPLES=OFF
+          -DKURLIKOR_BUILD_TOOLS=OFF
+          -DKURLIKOR_INSTALL_SAMPLES=OFF
+          -DKURLIKOR_INSTALL_TOOLS=OFF
+          -DKURLIKOR_BUILD_DOC=OFF
 
-      - name: Configure CMake (MacOS)
-        if: ${{ contains(matrix.os, 'macos') }}
-        run: cmake -B ${{github.workspace}}/build-${{matrix.buildType}} -DCMAKE_BUILD_TYPE=${{matrix.buildType}} -DKURLIKOR_VERSION=${{needs.get_version.outputs.version}} -DKURLIKOR_PACKAGE_SUFFIX=-${{matrix.buildType}}
+      - name: Configure CMake
+        if: ${{ contains(matrix.config.os, 'macos') }}
+        run: >
+          cmake -B ${{github.workspace}}/build-${{matrix.buildType}}
+          -DCMAKE_BUILD_TYPE=${{matrix.buildType}}
+          -DCMAKE_C_COMPILER=${{matrix.config.cc}}
+          -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}}
+          -DKURLIKOR_VERSION=${{needs.get_version.outputs.version}}
+          -DKURLIKOR_PACKAGE_SUFFIX=-${{matrix.buildType}}
+          -DKURLIKOR_BUILD_UNIT_TESTS=OFF
+          -DKURLIKOR_BUILD_SAMPLES=OFF
+          -DKURLIKOR_BUILD_TOOLS=OFF
+          -DKURLIKOR_INSTALL_SAMPLES=OFF
+          -DKURLIKOR_INSTALL_TOOLS=OFF
+          -DKURLIKOR_BUILD_DOC=OFF
 
-      - name: Configure CMake (Ubuntu)
-        env:
-          CC: gcc-${{env.GCC_VERSION}}
-          CXX: g++-${{env.GCC_VERSION}}
-        if: ${{ contains(matrix.os, 'ubuntu') }}
-        run: cmake -B ${{github.workspace}}/build-${{matrix.buildType}} -DCMAKE_BUILD_TYPE=${{matrix.buildType}} -DKURLIKOR_VERSION=${{needs.get_version.outputs.version}} -DKURLIKOR_PACKAGE_SUFFIX=-${{matrix.buildType}}
+      - name: Configure CMake
+        if: ${{ contains(matrix.config.os, 'linux') }}
+        run: >
+          cmake -B ${{github.workspace}}/build-${{matrix.buildType}}
+          -DCMAKE_BUILD_TYPE=${{matrix.buildType}}
+          -DCMAKE_C_COMPILER=${{matrix.config.cc}}
+          -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}}
+          -DKURLIKOR_VERSION=${{needs.get_version.outputs.version}}
+          -DKURLIKOR_PACKAGE_SUFFIX=-${{matrix.buildType}}
+          -DKURLIKOR_BUILD_UNIT_TESTS=OFF
+          -DKURLIKOR_BUILD_SAMPLES=OFF
+          -DKURLIKOR_BUILD_TOOLS=OFF
+          -DKURLIKOR_INSTALL_SAMPLES=OFF
+          -DKURLIKOR_INSTALL_TOOLS=OFF
+          -DKURLIKOR_BUILD_DOC=OFF
 
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build-${{matrix.buildType}} --config ${{matrix.buildType}}
+      - name: Build [Lib]
+        if: ${{ !contains(matrix.config.os, 'win') }}
+        run: >
+          cmake --build ${{github.workspace}}/build-${{matrix.buildType}}
+          --config ${{matrix.buildType}} -j ${{matrix.config.cores}}
 
-      - name: Pack
+      - name: Build [Lib]
+        if: ${{ contains(matrix.config.os, 'win') }}
+        run: >
+          cmake --build ${{github.workspace}}/build-${{matrix.buildType}}
+          --config ${{matrix.buildType}} -j ${{matrix.config.cores}}
+          --
+          /p:CL_MPCount=${{matrix.config.cores}}
+
+      - name: Pack [Lib]
         working-directory: ${{github.workspace}}/build-${{matrix.buildType}}
         run: cpack -G ZIP -C ${{matrix.buildType}} --config ./kurlikorPackConfig.cmake
 
-      - name: Upload
-        uses: actions/upload-artifact@v3
+      - name: Upload [Lib]
+        uses: actions/upload-artifact@v4
         with:
-          name: artifacts
+          name: artifacts-lib-${{matrix.config.name}}-${{matrix.buildType}}
           path: build-${{matrix.buildType}}/*.zip
 
   publish_release:
@@ -107,20 +174,28 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v3
-
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: artifacts-*
+          merge-multiple: true
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
 
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: softprops/action-gh-release@v1
+
+      - uses: softprops/action-gh-release@4634c16e79c963813287e889244c50009e7f0981
         with:
           files: |
             artifacts/*.zip
-          prerelease: ${{ contains(needs.get_version.outputs.version, 'alpha') || contains(needs.get_version.outputs.version, 'beta') || contains(needs.get_version.outputs.version, 'pre') }}
+            artifacts/build-Samples/*.zip
+            artifacts/build-Tools/*.zip
+          prerelease: >
+            ${{ contains(needs.get_version.outputs.version, 'alpha')
+            || contains(needs.get_version.outputs.version, 'beta') 
+            || contains(needs.get_version.outputs.version, 'pre') }}
           tag_name: ${{ needs.get_version.outputs.tag_name }}
           name: ${{ needs.get_version.outputs.version }}
           draft: ${{ contains(needs.get_version.outputs.version, 'draft') }}

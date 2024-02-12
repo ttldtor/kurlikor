@@ -1,4 +1,4 @@
-# Copyright (c) 2023 ttldtor.
+# Copyright (c) 2024 ttldtor.
 # SPDX-License-Identifier: BSL-1.0
 
 cmake_minimum_required(VERSION 3.20)
@@ -15,7 +15,7 @@ endif ()
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
